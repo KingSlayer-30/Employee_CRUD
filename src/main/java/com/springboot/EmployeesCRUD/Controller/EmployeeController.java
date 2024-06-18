@@ -1,7 +1,10 @@
 package com.springboot.EmployeesCRUD.Controller;
 
+import com.mysql.cj.log.Log;
 import com.springboot.EmployeesCRUD.Repository.EmployeeRepository;
 import com.springboot.EmployeesCRUD.model.Employee;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,8 @@ public class EmployeeController {
 
     @Autowired
     EmployeeRepository employeeRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(EmployeeController.class);
 
     //API to create new employee
     @PostMapping("/employees")
@@ -53,6 +58,33 @@ public class EmployeeController {
         }
 
 
+    }
+
+    @GetMapping("/employees/city/{emp_city}")
+    public ResponseEntity<List<Employee>> getEmployeeByCity(@PathVariable String emp_city){
+
+        List<Employee> emp = employeeRepository.findByempCity(emp_city);
+
+        if(!emp.isEmpty()){
+            return new ResponseEntity<>(emp, HttpStatus.FOUND);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/employees/age/{emp_age}")
+    public ResponseEntity<List<Employee>> getEmployeesByAge(@PathVariable int emp_age){
+
+        logger.info("Inside Method to find EMP greater than Age {}",emp_age);
+        List<Employee> emp = employeeRepository.findByAge(emp_age);
+
+        if(!emp.isEmpty()){
+            return new ResponseEntity<>(emp, HttpStatus.FOUND);
+        }
+        else{
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/employees/{empid}")
